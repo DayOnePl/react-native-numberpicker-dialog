@@ -19,6 +19,7 @@ import java.util.List;
 
 class RNNumberPickerDialogModule extends ReactContextBaseJavaModule {
     private Context context;
+    private AlertDialog.Builder dialogBuilder;
 
     public RNNumberPickerDialogModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -44,31 +45,45 @@ class RNNumberPickerDialogModule extends ReactContextBaseJavaModule {
 
         final NumberPicker picker = new NumberPicker(getCurrentActivity());
         picker.setMinValue(0);
-        picker.setMaxValue(values.size() -1);
+        picker.setMaxValue(values.size() - 1);
+        String selected = options.hasKey("selected") ?
+                options.getString("selected") :
+                null;
 
         String[] displayedValues = new String[values.size()];
-        for(int i = 0;i<values.size();++i) {
-            displayedValues[i] = values.getString(i);
+        for (int i = 0; i < values.size(); ++i) {
+            String value = values.getString(i);
+            displayedValues[i] = value;
+            if (selected != null && selected.equals(value)) {
+                picker.setValue(i);
+            }
         }
         picker.setDisplayedValues(displayedValues);
         picker.setWrapSelectorWheel(false);
         picker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
-        new AlertDialog.Builder(getCurrentActivity())
-            .setTitle(options.getString("title"))
-            .setMessage(options.getString("message"))
-            .setView(picker)
-            .setPositiveButton(options.getString("positiveButtonLabel"), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    onSuccess.invoke(picker.getValue());
-                }
-            })
-            .setNegativeButton(options.getString("negativeButtonLabel"), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    onSuccess.invoke(-1);
-                }
-            })
-            .create()
-            .show();
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getCurrentActivity());
+
+        if (options.hasKey("title")) {
+            dialogBuilder.setTitle(options.getString("title"));
+        }
+
+        if (options.hasKey("message")) {
+            dialogBuilder.setMessage(options.getString("message"));
+        }
+
+        dialogBuilder.setView(picker)
+                .setPositiveButton(options.getString("positiveButtonLabel"), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        onSuccess.invoke(picker.getValue());
+                    }
+                })
+                .setNegativeButton(options.getString("negativeButtonLabel"), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        onSuccess.invoke(-1);
+                    }
+                })
+                .create()
+                .show();
     }
 }
