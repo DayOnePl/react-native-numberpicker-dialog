@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/bamlab/react-native-numberpicker-dialog/issues"
   },
-  "homepage": "https://github.com/bamlab/react-native-numberpicker-dialog#readme"
+  "homepage": "https://github.com/bamlab/react-native-numberpicker-dialog#readme",
+  "peerDependencies": {
+    "react-native": "^0.41.2"
+  },
+  "dependencies": {
+    "react-native": "^0.56.0"
+  }
 }
